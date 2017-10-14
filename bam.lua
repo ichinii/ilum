@@ -20,6 +20,7 @@ AddTool(function(settings)
 	if conf == "debug" then
 		settings.debug = 1
 		settings.optimize = 0
+	  settings.cc.flags:Add("-g")
 	elseif conf == "release" then
 		settings.debug = 0
 		settings.optimize = 1
