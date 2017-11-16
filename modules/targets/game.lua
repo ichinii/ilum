@@ -5,6 +5,7 @@ function target:configure(settings)
   settings.link.libs:Add("GLU")
   settings.link.libs:Add("GLEW")
   settings.link.libs:Add("glfw")
+  settings.link.libs:Add("Box2D")
 
   local srcs = CollectRecursive(PathJoin("src", "*.cpp"))
   local objs = Compile(settings, srcs)

@@ -6,6 +6,7 @@
 Renderer::Renderer()
   : m_capacity(0)
   , m_size(0)
+  , m_color(1, 1, 1, 1)
 {
   glGenVertexArrays(1, &m_vao);
   glGenBuffers(1, &m_vbo);
@@ -18,8 +19,17 @@ Renderer::Renderer()
     2,
     GL_FLOAT,
     GL_FALSE,
-    0,
-    static_cast<void*>(nullptr)    
+    6 * sizeof(float),
+    static_cast<void*>(nullptr)
+  );
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(
+    1,
+    4,
+    GL_FLOAT,
+    GL_FALSE,
+    6 * sizeof(float),
+    reinterpret_cast<void*>(2 * sizeof(float))
   );
 
   setCapacity(1024);
@@ -39,12 +49,29 @@ void Renderer::render(float x0, float y0, float x1, float y1, float x2, float y2
   if (m_capacity <= m_size + 3 * 2)
     flush();
 
+  render(x0, y0, m_color, x1, y1, m_color, x2, y2, m_color);
+}
+
+void Renderer::render(float x0, float y0, glm::vec4 color0, float x1, float y1, glm::vec4 color1, float x2, float y2, glm::vec4 color2)
+{
   m_vertices[m_size++] = x0;
   m_vertices[m_size++] = y0;
+  m_vertices[m_size++] = color0.r;
+  m_vertices[m_size++] = color0.g;
+  m_vertices[m_size++] = color0.b;
+  m_vertices[m_size++] = color0.a;
   m_vertices[m_size++] = x1;
   m_vertices[m_size++] = y1;
+  m_vertices[m_size++] = color1.r;
+  m_vertices[m_size++] = color1.g;
+  m_vertices[m_size++] = color1.b;
+  m_vertices[m_size++] = color1.a;
   m_vertices[m_size++] = x2;
   m_vertices[m_size++] = y2;
+  m_vertices[m_size++] = color2.r;
+  m_vertices[m_size++] = color2.g;
+  m_vertices[m_size++] = color2.b;
+  m_vertices[m_size++] = color2.a;
 }
 
 void Renderer::render(float* arr, std::size_t size)
@@ -58,12 +85,7 @@ void Renderer::render(glm::vec2 v0, glm::vec2 v1, glm::vec2 v2)
   if (m_capacity <= m_size + 3 * 2)
     flush();
 
-  m_vertices[m_size++] = v0.x;
-  m_vertices[m_size++] = v0.y;
-  m_vertices[m_size++] = v1.x;
-  m_vertices[m_size++] = v1.y;
-  m_vertices[m_size++] = v2.x;
-  m_vertices[m_size++] = v2.y;
+  render(v0.x, v0.y, v1.x, v1.y, v2.x, v2.y);
 }
 
 void Renderer::render(glm::vec2 v0, glm::vec2 v1, glm::vec2 v2, glm::vec2 v3)
@@ -72,15 +94,14 @@ void Renderer::render(glm::vec2 v0, glm::vec2 v1, glm::vec2 v2, glm::vec2 v3)
   render(v2, v3, v0);
 }
 
-
 void Renderer::renderCircle(glm::vec2 pos, float radius, int slices)
 {
-  float prevX = pos.y + radius * std::cos(0.f);
-  float prevY = pos.x + radius * std::sin(0.f);
+  float prevX = pos.x + radius * std::cos(0.f);
+  float prevY = pos.y + radius * std::sin(0.f);
   for (int i = 1; i < slices + 1; i++)
   {
-    float x = pos.x + radius * std::cos(static_cast<float>(i) / slices * 3.14f * 2.f);
-    float y = pos.y + radius * std::sin(static_cast<float>(i) / slices * 3.14f * 2.f);
+    float x = pos.x + radius * std::cos(static_cast<float>(i) / slices * 3.1415926535897931f * 2.f);
+    float y = pos.y + radius * std::sin(static_cast<float>(i) / slices * 3.1415926535897931f * 2.f);
     
     render(pos.x, pos.y, prevX, prevY, x, y);
 
@@ -114,6 +135,21 @@ void Renderer::flush()
   glBindVertexArray(0);
 
   m_size = 0;
+}
+
+glm::vec4 Renderer::color()
+{
+  return m_color;
+}
+
+void Renderer::setColor(glm::vec4 color)
+{
+  m_color = color;
+}
+
+void Renderer::setColor(glm::vec3 color)
+{
+  m_color = glm::vec4(color.r, color.g, color.b, 1);
 }
 
 std::size_t Renderer::capacity()

@@ -1,7 +1,7 @@
 target = NewTarget("tests")
 
 function target:configure(settings)
-  local tests = CollectRecursive(PathJoin("tests", "*.lua"))
+  local tests = Collect(PathJoin("tests", "*.lua"))
   for k, v in pairs(tests) do
     local settings = TableDeepCopy(settings)
 

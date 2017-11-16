@@ -18,6 +18,7 @@ public:
 
   void loadFromFile(std::string vertexShaderFilepath, std::string fragmentShaderFilepath);
   void makeActive();
+  GLuint programId() { return m_programId; }
 
 private:
   GLuint m_programId;

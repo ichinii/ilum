@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <Box2D/Box2D.h>
 #include "graphics.hpp"
 #include "renderer.hpp"
 
@@ -24,19 +25,17 @@ Graphics::Graphics()
   });
 
   glfwSetWindowSizeCallback(m_window, [] (GLFWwindow* window, int width, int height) {
-    
   });
 
   //glEnable(GL_CULL_FACE);
   //glCullFace(GL_BACK);
  
   m_renderer = std::make_unique<Renderer>(); 
-
 }
 
 Graphics::~Graphics()
 {
-  glfwSetFramebufferSizeCallback(m_window, nullptr);
+  glfwDestroyWindow(m_window);
   glfwSetWindowShouldClose(m_window, true);
   glfwTerminate();
 }
@@ -51,10 +50,8 @@ void Graphics::display()
   glfwSwapBuffers(m_window);
 }
 
-
 void Graphics::render()
 {
-  m_renderer->render(glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 1));
   m_renderer->flush();
 }
 
@@ -83,4 +80,9 @@ glm::vec2 Graphics::size()
 void Graphics::setSize(glm::vec2 size)
 {
   glfwSetWindowSize(m_window, size.x, size.y);
+}
+
+GLFWwindow* Graphics::window()
+{
+  return m_window;
 }

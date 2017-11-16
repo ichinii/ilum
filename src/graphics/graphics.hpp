@@ -21,6 +21,7 @@ public:
   bool windowShouldClose();
   glm::vec2 size();
   void setSize(glm::vec2 size);
+  GLFWwindow* window();
 
 private:
   GLFWwindow* m_window;
